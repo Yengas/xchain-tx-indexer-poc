@@ -1,0 +1,31 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(IndexedDataStorage, "Indexed Data Storage") {
+    Container(transactionDB, "Transaction Database", "SQL Database")
+}
+
+System_Boundary(ConsumingBlockchainData, "Consuming Blockchain Data") {
+    Container(liveBlockConsumer, "Live Block Consumer", "Live Block Consumer")
+    Container(backfillingJob, "Backfilling Job", "Backfilling Job")
+}
+
+System_Boundary(TransactionAnalysisPlugins, "Transaction Analysis Plugins") {
+    Container(nativeTokenPlugin, "Native Token Transfer Plugin", "Native Token Transfer Plugin")
+    Container(erc20TokenPlugin, "ERC20 Token Transfer Plugin", "ERC20 Token Transfer Plugin")
+}
+
+transactionDB -[hidden]d-> liveBlockConsumer
+transactionDB -[hidden]d-> backfillingJob
+
+Rel(liveBlockConsumer, transactionDB, "Stores live transactions")
+Rel(backfillingJob, transactionDB, "Stores backfilled transactions")
+
+ConsumingBlockchainData -[hidden]d-> TransactionAnalysisPlugins
+
+liveBlockConsumer --> nativeTokenPlugin: uses
+backfillingJob --> nativeTokenPlugin: uses
+liveBlockConsumer --> erc20TokenPlugin: uses
+backfillingJob --> erc20TokenPlugin: uses
+
+@enduml
