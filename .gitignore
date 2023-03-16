@@ -215,3 +215,6 @@ tags
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,visualstudiocode,macos,node
+
+# Folder for storing runtime data. E.g. sqlite etc
+data/
