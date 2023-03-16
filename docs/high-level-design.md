@@ -110,3 +110,26 @@ So far, even though we talked about the `LiveBlockConsumer` and `BackfillingJob`
 A good idea could be `LiveBlockConsumer` to get notified whenever there is a new address, and then creating a notification with `{ address, network, firstLiveBlockId }`. With this kind of notification, we can understand which was the first processed live block, when the address got introduced.
 
 Later we can listen for these notifications to start backfilling jobs where `toBlock` is `firstLiveBlockId - 1`. The starting of the jobs maybe done by listeners which are specific to plugins. This way, plugins may decide to parallelize the backfilling operation.
+
+To not miss any `BackfillingJob` creation, outbox pattern maybe used for the notifications sent by the `LiveBlockConsumer` when a new address is created.
+
+## Monitoring and Alerting
+
+In order to ensure the reliability and performance of the system, we need to implement proper monitoring and alerting mechanisms for both the `LiveBlockConsumer` and the `BackfillingJob`. Monitoring and alerting will allow us to identify potential issues and react to them in a timely manner, ensuring the overall health of the system.
+
+Custom metrics can be monitored and proper alerts maybe set to ensure system is reliable and is functioning without any problems. Besides these metrics, any unexpected error during the processing of the data should create an alert.
+
+### LiveBlockConsumer
+
+For monitoring the `LiveBlockConsumer`, we should focus on the following metrics:
+
+1. **Block processing time**: The time it takes to process each block, including transaction analysis and storage. Monitoring this metric will help us identify performance issues or bottlenecks in the processing pipeline.
+2. **Block processing backlog**: The number of blocks waiting to be processed. A growing backlog may indicate that the `LiveBlockConsumer` is unable to keep up with the incoming data, and we may need to scale up or optimize our system.
+
+### BackfillingJob
+
+For monitoring the `BackfillingJob`, we should track the following metrics:
+
+1. **Job completion time**: The time it takes to complete a backfilling job, from start to finish. This metric can help us identify bottlenecks or performance issues in the backfilling process. This metric can be broken down by plugin / network.
+2. **Job backlog**: The number of backfilling jobs waiting to be executed. A growing backlog may indicate that the system is unable to keep up with the demand for backfilling, and we may need to scale up or optimize our infrastructure.
+3. **API error rate**: The rate of errors encountered while interacting with blockchain nodes or other external APIs. High error rates can indicate issues with network connectivity or API stability.
