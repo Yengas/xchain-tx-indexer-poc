@@ -7,7 +7,7 @@ Design and PoC implementation of a Blockchain indexer which can subscribe for mu
 - Indexer will support N different EVM compatible networks
 - Indexer will subscribe to transactions of a dynamic list of addresses
   - Addresses may get added to the dynamic list of addresses on demand (removing is out of scope)
-- Indexer should be resilient to problems such as server failures, going out of sync with the chain 
+- Indexer should be resilient to problems such as server failures, going out of sync with the chain
 - Indexer should support pluggable transaction analyzers
 - Indexer should support querying transaction history of multiple addresses accross different networks
 

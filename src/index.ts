@@ -1,15 +1,50 @@
 import express from 'express';
-import config from './config';
+import path from 'path';
+import fs from 'fs';
 import bodyParser from 'body-parser';
-import { bootstrapKnex } from './adapters/database/knex/knex-bootstrap';
+import config from './config';
+import { bootstrapKnex } from './adapters/database/knex/bootstrap-knex';
+import { bootstrapAlchemy } from './adapters/eth-api/alchemy/bootstrap-alchemy';
+import { BlockChainNetwork } from './domain/analyzers/blockchain-types/network';
+import { StreamLiveBlocks } from './infrastructure/stream-live-blocks/stream-live-blocks';
+import { FullBlock } from './domain/analyzers/blockchain-types/full-block';
+
+const BD_FOLDER = path.join(__dirname, '../data/bd');
 
 const app = express();
 
 // Use the body-parser middleware to parse JSON request bodies
 app.use(bodyParser.json());
 
+const network = BlockChainNetwork.ETH;
+
 async function main() {
-  const { transactionRepository } = await bootstrapKnex();
+  const [
+    { transactionRepository, streamLiveBlocksRepository },
+    { streamLiveBlocksEthAdapter },
+  ] = await Promise.all([bootstrapKnex(), bootstrapAlchemy({ network })]);
+
+  const streamLiveBlocks = new StreamLiveBlocks(
+    network,
+    streamLiveBlocksRepository,
+    streamLiveBlocksEthAdapter,
+    async function ({
+      network,
+      block,
+    }: {
+      network: BlockChainNetwork;
+      block: FullBlock;
+    }) {
+      const fname = path.join(
+        BD_FOLDER,
+        `net-${network}-${block.number}-full.json`,
+      );
+
+      fs.writeFileSync(fname, JSON.stringify(block), 'utf-8');
+    },
+  );
+
+  await streamLiveBlocks.start();
 
   // Endpoint to create a new user record
   app.post('/transactions', (_, res) => {

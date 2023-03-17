@@ -6,7 +6,7 @@ Below is an explanation of the challenge with bakfilling, some possible mitation
 
 ## Challenge of Indexing Only a Tracked List of Addresses
 
-In EVM compatible networks, we can use the block(s) transaction data, receipts and logs to understand what happened in a transaction and who were affected. 
+In EVM compatible networks, we can use the block(s) transaction data, receipts and logs to understand what happened in a transaction and who were affected.
 
 For simple transactions, we can look at the `from` and `to` fields of the transaction, and for Smart Contract calls, we can utilize the ABI of the Contract to understand individual function calls(tx `data`) and what kind of events where emitted(`logs`).
 

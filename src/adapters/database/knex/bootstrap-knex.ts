@@ -2,6 +2,7 @@ import path from 'path';
 import knex from 'knex';
 import config from '../../../config';
 import { TransactionRepositoryKnex } from './transaction-repository.knex';
+import { StreamLiveBlocksRepositoryKnex } from './stream-live-blocks-repository.knex';
 
 const MIGRATIONS_PATH = path.join(__dirname, '../../../../migrations');
 
@@ -21,5 +22,6 @@ export async function bootstrapKnex() {
 
   return {
     transactionRepository: new TransactionRepositoryKnex(db),
+    streamLiveBlocksRepository: new StreamLiveBlocksRepositoryKnex(db),
   };
 }

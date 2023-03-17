@@ -1,7 +1,8 @@
 import { Knex } from 'knex';
 import { Transaction } from '../../../domain/structured-data/transaction/transaction';
+import { TransactionRepository } from '../../../domain/structured-data/transaction/transaction-repository';
 
-export class TransactionRepositoryKnex {
+export class TransactionRepositoryKnex implements TransactionRepository {
   private static TABLE_NAME = 'transactions';
 
   constructor(private readonly db: Knex) {}
@@ -28,14 +29,6 @@ export class TransactionRepositoryKnex {
       .ignore();
   }
 
-  /**
-   * Given some addresses and networks, return all transactions which those
-   * addresses where involved in (either in `from` or `to`) part,
-   * across given networks.
-   *
-   * @param addresses for to scan in from / to
-   * @param networks which networks to look for
-   */
   async getForAddressesAcrossNetworks({
     addresses,
     networks,

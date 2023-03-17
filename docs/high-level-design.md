@@ -2,7 +2,7 @@
 
 This document contains a production ready design for the blockchain indexer defined in the [README.md](../README.md). There have been some assumptions made about the system whilst making this design, noted in [NOTES.md](../NOTES.md).
 
-We can breakdown the high level design into 3 different modules with distinct responsibilities. This will enable separation of concerns, whilst providing a maintainable, extendible and a scaleable system. 
+We can breakdown the high level design into 3 different modules with distinct responsibilities. This will enable separation of concerns, whilst providing a maintainable, extendible and a scaleable system.
 
 1. **Indexed Data Storage** in what format to store the indexed data and to where.
 2. **Consuming Blockchain Data** how to consume blockchain data in real-time and to back-fill missing indexed data.
@@ -21,18 +21,18 @@ Assuming we don't want to unify token addresses accross different chains. We can
 ```typescript
 type Transaction = {
   // BEGIN network and transaction related data
-  network: number,
-  block_id: number,
-  tx_idx: number,
-  tx_hash: string,
+  network: number;
+  block_id: number;
+  tx_idx: number;
+  tx_hash: string;
   // timestamp for the transaction
-  tx_ts: number,
+  tx_ts: number;
   // BEGIN token transaction related data
-  from: string, // eth address
-  to: string, // eth address
-  token: string, // token contract address or native token name
-  amount: number, // how much was transferred
-}
+  from: string; // eth address
+  to: string; // eth address
+  token: string; // token contract address or native token name
+  amount: number; // how much was transferred
+};
 ```
 
 According to our query needs, we may later replicate this data in different formats to serve different queries. We may even use different databases that perform in some specific operations.
@@ -51,27 +51,26 @@ As highlighted in the previous documents, whilst the realtime transaction analys
 We can isolate the both problems into two separate flows to handle this complexity. Let's start by breaking down the problem into two:
 
 1. Having a consumer which continuously listens for newer minted blocks. Let's call it `LiveBlockConsumer`.
-    1. `LiveBlockConsumer` will be run for each EVM compatible network we support.
-    2. Consumer will consume all necessary blockchain transactions, logs and data.
-    3. Consumer will run all analysis plugins we support to extract information.
-    4. Consumer will store all extracted information into some structured database (`Transaction`).
+   1. `LiveBlockConsumer` will be run for each EVM compatible network we support.
+   2. Consumer will consume all necessary blockchain transactions, logs and data.
+   3. Consumer will run all analysis plugins we support to extract information.
+   4. Consumer will store all extracted information into some structured database (`Transaction`).
 2. Creating jobs for each backfilling operation that needs to be done. Let's call these `BackfillingJob`.
-    1. A `BackfillingJob` will be run with `{ network, address, plugin, fromBlock, toBlock }` parameters. Whenever we need to backfill missing information for a given address.
-    2. If we want to backfill a given address, a `BackfillingJob` will be run for each plugin we have. This way, plugins may use different query mechanisms to collect missing data in an optimized way.
-    3. `BackfillingJob` will run until all the blocks `fromBlock` to `toBlock` is processed and then will finish.
-    4. Job will save the information it extracts with the plugin into the same database (`Transaction`) as the `LiveBlockConsumer`.
+   1. A `BackfillingJob` will be run with `{ network, address, plugin, fromBlock, toBlock }` parameters. Whenever we need to backfill missing information for a given address.
+   2. If we want to backfill a given address, a `BackfillingJob` will be run for each plugin we have. This way, plugins may use different query mechanisms to collect missing data in an optimized way.
+   3. `BackfillingJob` will run until all the blocks `fromBlock` to `toBlock` is processed and then will finish.
+   4. Job will save the information it extracts with the plugin into the same database (`Transaction`) as the `LiveBlockConsumer`.
 
 ### Fault Resilience and Performance
 
 Both `LiveBlockConsumer` and `BackfillingJob` needs to be designed in a failure resilient way. For this failure resiliency, we have multiple options.
 
 1. `BackfillingJob` should be designed in a way that it stores its state in a database and should query data in batches.
-    1. Already existing frameworks or cloud native solutions maybe used to execute Jobs in a failure resilient way.
+   1. Already existing frameworks or cloud native solutions maybe used to execute Jobs in a failure resilient way.
 1. `LiveBlockConsumer` can be designed in different ways to be fault tolerant:
-    1. It may process blocks one by one, storing the latest block it processed in some database. 
-    2. It may listen to some queue for minted blocks, process each queue message. Queue would handle the fault resiliency.
-    3. We may use a similar approach as a in `BackfillingJob` and think of this as a Job that never ends.
-
+   1. It may process blocks one by one, storing the latest block it processed in some database.
+   2. It may listen to some queue for minted blocks, process each queue message. Queue would handle the fault resiliency.
+   3. We may use a similar approach as a in `BackfillingJob` and think of this as a Job that never ends.
 
 `BackfillingJob` should already be performant since it will run for each user and each plugin. Meaning we can horizontally scale the job execution.
 
