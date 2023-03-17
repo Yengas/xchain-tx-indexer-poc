@@ -10,6 +10,7 @@
 - Register to [Alchemy](https://www.alchemy.com/) and get an API Key
 - Copy `.env.example` to `.env`
 - Edit `ALCHEMY_API_KEY_ETH` with your own API KEY
+- `npm install` to install all dependencies
 
 ## Run
 
@@ -61,5 +62,5 @@ Hexagonal / Ports & Adapters architecture was used for the project.
 - The whole application runs with a single instance. Without any fault tolerance or a separate database instance.
 - `LiveBlockConsumer` uses **Alchemy** `getBlockWithTransactions` and `getTransactionReceipts` to get all transaction / receipts for a block. There could be problems with transactions which get re-orged or removed. It is better to rely on some transaction listening that waits for some confirmations / subscribes to stream of mined transactions.
 - `BackfillingJob` is not implemented yet. Only live-streaming blocks has been done.
-- No monitoring, error handling, integration testing. 
+- No monitoring, error handling, integration testing.
 - Testing overall is very limited, only the analysis plugins have unit tests.
