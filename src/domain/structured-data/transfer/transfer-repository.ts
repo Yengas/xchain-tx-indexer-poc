@@ -1,8 +1,8 @@
-import { Transaction } from './transaction';
+import { Transfer } from './transfer';
 
-export interface TransactionRepository {
+export interface TransferRepository {
   /**
-   * Given some addresses and networks, return all transactions which those
+   * Given some addresses and networks, return all transfers which those
    * addresses where involved in (either in `from` or `to`) part,
    * across given networks.
    *
@@ -15,5 +15,5 @@ export interface TransactionRepository {
   }: {
     addresses: string[];
     networks: number[];
-  }): Promise<Transaction[]>;
+  }): Promise<Transfer[]>;
 }

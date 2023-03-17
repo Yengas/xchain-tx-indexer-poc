@@ -1,11 +1,11 @@
-export type Transaction = {
-  // the transaction / network related information
+export type Transfer = {
+  // the transfer / network related information
   network: number;
   blockId: number;
   txIdx: number;
   txHash: string;
   txTs: number;
-  // the transfer transaction related information
+  // the transfer related information
   from: string;
   to: string;
   token: string;

@@ -1,5 +1,5 @@
-import { Transaction } from '../../structured-data/transaction/transaction';
+import { Transfer } from '../../structured-data/transfer/transfer';
 
 export interface LiveBlockConsumerRepository {
-  bulkInsert(transactions: Transaction[]): Promise<void>;
+  bulkInsert(transfers: Transfer[]): Promise<void>;
 }

@@ -2,7 +2,7 @@
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
 System_Boundary(IndexedDataStorage, "Indexed Data Storage") {
-    Container(transactionDB, "Transaction Database", "SQL Database")
+    Container(transactionDB, "Transfer Database", "SQL Database")
 }
 
 System_Boundary(ConsumingBlockchainData, "Consuming Blockchain Data") {

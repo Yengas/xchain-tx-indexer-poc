@@ -27,7 +27,7 @@ However backfilling missing data for an address that does not exist in our index
 
 To backfill indexing for a new address we haven't been tracking before. We have some optimizations we can do:
 
-### Option 1. Using Already Indexed Transaction Data
+### Option 1. Using Already Indexed Transfer Data
 
 If we are indexing data such as ERC20, ERC721 transactions. There could be APIs which already provide access to indexed data. If such APIs exist, we may think about using those.
 

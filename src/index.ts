@@ -34,7 +34,7 @@ main().catch((err) => {
 
 async function main() {
   const [
-    { transactionRepository, streamLiveBlocksRepository },
+    { transferRepository, streamLiveBlocksRepository },
     { streamLiveBlocksEthAdapter },
   ] = await Promise.all([
     bootstrapKnex(),
@@ -45,7 +45,7 @@ async function main() {
     {
       trackedAddresses: TRACKED_ADDRESSES,
     },
-    transactionRepository,
+    transferRepository,
     PLUGINS,
   );
 
@@ -74,21 +74,21 @@ async function main() {
   await streamLiveBlocks.start();
 
   // Endpoint to retrieve all user records
-  app.get('/transactions', (req, res) => {
+  app.get('/transfers', (req, res) => {
     const { addresses, networks } = req.body;
 
     // Retrieve all user records from the database
-    transactionRepository
+    transferRepository
       .getForAddressesAcrossNetworks({
         addresses,
         networks,
       })
-      .then((transactions) => {
-        res.json({ transactions });
+      .then((transfers) => {
+        res.json({ transfers });
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send('Error retrieving transactions');
+        res.status(500).send('Error retrieving transfers');
       });
   });
 

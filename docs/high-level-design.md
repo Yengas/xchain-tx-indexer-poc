@@ -19,7 +19,7 @@ We can start with thinking about how to design this database to serve our query 
 Assuming we don't want to unify token addresses accross different chains. We can start with a simple table structure like:
 
 ```typescript
-type Transaction = {
+type Transfer = {
   // BEGIN network and transaction related data
   network: number;
   block_id: number;
@@ -27,7 +27,7 @@ type Transaction = {
   tx_hash: string;
   // timestamp for the transaction
   tx_ts: number;
-  // BEGIN token transaction related data
+  // BEGIN token transfer related data
   from: string; // eth address
   to: string; // eth address
   token: string; // token contract address or native token name
@@ -44,7 +44,7 @@ For now, assuming we will use SQL database. We can create the below indexes to m
 
 ## 2. Consuming Blockchain Data
 
-To feed the `Transaction` database we created in the earlier step, we need to consume blockchain data and map them to transactions.
+To feed the `Transfer` database we created in the earlier step, we need to consume blockchain data and map them to transactions.
 
 As highlighted in the previous documents, whilst the realtime transaction analysis is a trivial task, the backfilling of the indexed data may be more complicated.
 
@@ -54,12 +54,12 @@ We can isolate the both problems into two separate flows to handle this complexi
    1. `LiveBlockConsumer` will be run for each EVM compatible network we support.
    2. Consumer will consume all necessary blockchain transactions, logs and data.
    3. Consumer will run all analysis plugins we support to extract information.
-   4. Consumer will store all extracted information into some structured database (`Transaction`).
+   4. Consumer will store all extracted information into some structured database (`Transfer`).
 2. Creating jobs for each backfilling operation that needs to be done. Let's call these `BackfillingJob`.
    1. A `BackfillingJob` will be run with `{ network, address, plugin, fromBlock, toBlock }` parameters. Whenever we need to backfill missing information for a given address.
    2. If we want to backfill a given address, a `BackfillingJob` will be run for each plugin we have. This way, plugins may use different query mechanisms to collect missing data in an optimized way.
    3. `BackfillingJob` will run until all the blocks `fromBlock` to `toBlock` is processed and then will finish.
-   4. Job will save the information it extracts with the plugin into the same database (`Transaction`) as the `LiveBlockConsumer`.
+   4. Job will save the information it extracts with the plugin into the same database (`Transfer`) as the `LiveBlockConsumer`.
 
 ### Fault Resilience and Performance
 
@@ -88,11 +88,11 @@ The plugins needs to be able to do:
 2. Given a transaction, receipt, and logs. It needs to extract structured data out of it.
 3. It needs to be able to backfill missing indexed data by making performant queries
 
-Given our `Transaction` indexing structure. We need two plugins:
+Given our `Transfer` indexing structure. We need two plugins:
 
 ### 3.1. Native Token Transfer Plugin
 
-We need to be able to understand per network, which transactions are native token transfers. Later we need to convert these into appropiate `Transaction` models.
+We need to be able to understand per network, which transactions are native token transfers. Later we need to convert these into appropiate `Transfer` models.
 
 - **Configuration**: The network we are running on and some network related configuration maybe needed.
 - **Backfill Method**: Since it is not possible to query ETH nodes to get native token transfers efficiently, we can use some third party provider for these native token transfers.
