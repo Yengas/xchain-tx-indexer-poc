@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { StreamLiveBlocksRepository } from '../../../infrastructure/stream-live-blocks/stream-live-blocks.repository';
+import { StreamLiveBlocksRepository } from '../../../application/stream-live-blocks/stream-live-blocks.repository';
 import { BlockChainNetwork } from '../../../domain/analyzers/blockchain-types/network';
 
 export class StreamLiveBlocksRepositoryKnex

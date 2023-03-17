@@ -35,12 +35,9 @@ Hexagonal / Ports & Adapters architecture was used for the project.
 
 ```
 .
-├── adapters # Adapters for various implementation detail concerns
-│   ├── database
-│   │   └── knex # Knex and Sqlite implementation for Transaction / Live Stream State Storage
-│   └── eth-api
-│       └── alchemy # ETH API for retrieving blocks
-├── domain # Pure Domain Logic, representing th High Level Design
+├── application # Orchestration of different modules and entrypoints
+│   └── stream-live-blocks # Code for retrieving and processing blocks in a live manner
+├── domain # Pure Domain Logic, representing the High Level Design
 │   ├── analyzers # **TransactionAnalysisPlugins** Domain
 │   │   ├── analyzer-plugin # base analyzer plugin types
 │   │   ├── blockchain-types # blockchain types analyzers knows about
@@ -50,8 +47,11 @@ Hexagonal / Ports & Adapters architecture was used for the project.
 │   │   └── live-block-consumer # processing individual blocks live, saving structured data results
 │   └── structured-data # **IndexedDataStorage** Domain
 │       └── transfer # types and query interfaces for `Transfer`
-├── infrastructure
-│   └── stream-live-blocks # Infrastructure code for retrieving and processing blocks in a live manner
+├── infrastructure # Adapters for various implementation detail concerns / external systems
+│   ├── database
+│   │   └── knex # Knex and Sqlite implementation for Transaction / Live Stream State Storage
+│   └── eth-api
+│       └── alchemy # ETH API for retrieving blocks
 ├── config.ts # main configuration for different adapters
 ├── run-config.ts # configuration related to which addresses to track, which contracts to listen etc.
 └── index.ts # entrpint for the app

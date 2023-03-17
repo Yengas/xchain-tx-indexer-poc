@@ -1,6 +1,6 @@
 import { CoreNamespace } from 'alchemy-sdk';
 import { FullBlock } from '../../../domain/analyzers/blockchain-types/full-block';
-import { StreamLiveBlocksEthAdapter } from '../../../infrastructure/stream-live-blocks/stream-live-blocks-eth-adapter';
+import { StreamLiveBlocksEthAdapter } from '../../../application/stream-live-blocks/stream-live-blocks-eth-adapter';
 
 export class AlchemyCoreAdapter implements StreamLiveBlocksEthAdapter {
   constructor(private readonly core: CoreNamespace) {}
