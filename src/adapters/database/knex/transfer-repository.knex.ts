@@ -42,7 +42,8 @@ export class TransferRepositoryKnex implements TransferRepository {
       .andWhere((qb) =>
         qb.whereIn('from', addresses).orWhereIn('to', addresses),
       )
-      .orderBy('tx_ts', 'desc');
+      .orderBy('tx_ts', 'desc')
+      .limit(100);
 
     return items.map((record) =>
       TransferRepositoryKnex.fromDatabaseFormat(record),

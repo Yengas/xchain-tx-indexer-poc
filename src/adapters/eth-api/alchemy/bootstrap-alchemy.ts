@@ -1,5 +1,4 @@
 import { Alchemy, Network } from 'alchemy-sdk';
-import config from '../../../config';
 import { AlchemyCoreAdapter } from './alchemy-core-adapter';
 import { BlockChainNetwork } from '../../../domain/analyzers/blockchain-types/network';
 
@@ -21,11 +20,13 @@ function getAlchemyNetworkByBlockChainNetwork(
 
 export async function bootstrapAlchemy({
   network,
+  apiKey,
 }: {
   network: BlockChainNetwork;
+  apiKey: string;
 }) {
   const alchemy = new Alchemy({
-    apiKey: config.alchemy.apiKey,
+    apiKey,
     network: getAlchemyNetworkByBlockChainNetwork(network),
   });
 

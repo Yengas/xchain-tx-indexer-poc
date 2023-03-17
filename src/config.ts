@@ -18,7 +18,4 @@ export default {
       max: 1,
     },
   },
-  alchemy: {
-    apiKey: process.env.ALCHEMY_API_KEY,
-  },
 };

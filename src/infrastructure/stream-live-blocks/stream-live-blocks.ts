@@ -12,8 +12,6 @@ type HandlerFunc = ({
 }) => Promise<void>;
 
 export class StreamLiveBlocks {
-  private static readonly TICKER_MS = 3000;
-
   private state:
     | { status: 'IDLE' }
     | { status: 'IN_PROGRESS'; timeoutHandle: NodeJS.Timeout }
@@ -22,7 +20,7 @@ export class StreamLiveBlocks {
   };
 
   constructor(
-    private readonly network: BlockChainNetwork,
+    private readonly config: { network: BlockChainNetwork; tickerMS: number },
     private readonly repository: StreamLiveBlocksRepository,
     private readonly ethAdapter: StreamLiveBlocksEthAdapter,
     private readonly handler: HandlerFunc,
@@ -51,7 +49,7 @@ export class StreamLiveBlocks {
         { blockNumber: number } | undefined,
         number,
       ] = await Promise.all([
-        this.repository.getLastProcessed(this.network),
+        this.repository.getLastProcessed(this.config.network),
         this.ethAdapter.getLatestBlockNumber(),
       ]);
 
@@ -65,10 +63,10 @@ export class StreamLiveBlocks {
 
       const block = await this.ethAdapter.getFullBlock(blockToProcess);
 
-      await this.handler({ network: this.network, block });
+      await this.handler({ network: this.config.network, block });
 
       await this.repository.setLastProcessedBlock({
-        network: this.network,
+        network: this.config.network,
         blockNumber: blockToProcess,
       });
     } catch (err) {
@@ -78,7 +76,7 @@ export class StreamLiveBlocks {
       if (this.state.status === 'IN_PROGRESS') {
         this.state.timeoutHandle = setTimeout(
           () => this.step(),
-          StreamLiveBlocks.TICKER_MS,
+          this.config.tickerMS,
         );
       }
     }

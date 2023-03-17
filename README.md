@@ -21,6 +21,15 @@ You can find the detailed notes regarding this complexity and the assumptions in
 
 ## High Level Design
 
+High level design for the service can be fond at [docs/high-level-design.md](./docs/high-level-design.md)
+
+![High Level Design - Component Diagram](./docs/diagrams/hld-component-diagram.png)
+
+
 ## Proof of Concept
+
+To demonstrate the High Level Design, a PoC has been coded with hexagonal architecture. It supports live listening to multiple blockchain networks to analyse Native Token / ERC20 transfers.
+
+The details on what was implemented and how can be found in [docs/proof-of-concept.md](./docs/proof-of-concept.md)
 
 ## Demo
