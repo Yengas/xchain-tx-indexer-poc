@@ -25,7 +25,8 @@ export class AnalyzerPluginNative implements AnalyzerPlugin<Transfer> {
 
       if (
         tx.to &&
-        (trackedAddresses.includes(tx.from) || trackedAddresses.includes(tx.to))
+        (trackedAddresses.includes(tx.from.toLowerCase()) ||
+          trackedAddresses.includes(tx.to.toLowerCase()))
       ) {
         // Check if the transaction is an ETH transfer and not a contract call
         if (
@@ -40,8 +41,8 @@ export class AnalyzerPluginNative implements AnalyzerPlugin<Transfer> {
             txHash: tx.hash,
             txTs: block.timestamp,
             // transfer info
-            from: tx.from,
-            to: tx.to,
+            from: tx.from.toLowerCase(),
+            to: tx.to.toLowerCase(),
             token: this.config.tokenName,
             amount: parseFloat(tx.value.toString()),
           });

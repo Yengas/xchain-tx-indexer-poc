@@ -8,9 +8,13 @@ export class LiveBlockConsumerProcess {
     private readonly config: { trackedAddresses: string[] },
     private readonly repository: LiveBlockConsumerRepository,
     private readonly plugins: AnalyzerPlugin<Transfer>[],
-  ) {}
+  ) {
+    this.config.trackedAddresses = this.config.trackedAddresses.map((addr) =>
+      addr.toLowerCase(),
+    );
+  }
 
-  async processBlock(block: FullBlock): Promise<void> {
+  async processBlock(block: FullBlock): Promise<{ count: number }> {
     const transfers: Transfer[] = (
       await Promise.all(
         this.plugins.map((plugin) =>
@@ -25,5 +29,7 @@ export class LiveBlockConsumerProcess {
     if (transfers.length > 0) {
       await this.repository.bulkInsert(transfers);
     }
+
+    return { count: transfers.length };
   }
 }
